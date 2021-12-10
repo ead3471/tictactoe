@@ -3,12 +3,14 @@ from PIL import Image
 from PIL import ImageTk
 from tkinter import font
 from cell import Cell
+from functools import partial
 import array
 
 # Press the green button in the gutter to run the script.
 BACKGROUND_COLOR = "#B1DDC6"
 
 board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+is_cross_turn = True
 
 
 def center_window(window: Tk, width=300, height=450):
@@ -26,12 +28,16 @@ def center_window(window: Tk, width=300, height=450):
 
 
 def drop_board():
-    Cell.cross_turn = True
-    Cell.drop_all_cells()
+    for row in board:
+        for cell in row:
+            cell.drop_state()
 
 
-def board_clicked():
-    print('here')
+def board_clicked(button: Cell):
+    global is_cross_turn
+    print(button.name)
+    button.click(is_cross_turn)
+    is_cross_turn = not is_cross_turn
 
 
 if __name__ == '__main__':
@@ -67,39 +73,14 @@ if __name__ == '__main__':
 
     headerFrame.pack(side='top')
 
-
-    boardFrameRow1 = Frame(width=200, height=100, background=BACKGROUND_COLOR)
-    boardFrameRow1.pack(side='top')
-
-    button_00 = Cell(boardFrameRow1, cross_cell, zero_cell, empty_cell, 0, 0)
-    button_00.pack(side='left')
-    board[0][0] = button_00
-
-    button_01 = Cell(boardFrameRow1, cross_cell, zero_cell, empty_cell, 0, 1)
-    button_01.pack(side='left')
-    board[0][1] = button_01
-
-    button_02 = Cell(boardFrameRow1, cross_cell, zero_cell, empty_cell, 0, 2)
-    button_02.pack(side='left')
-    board[0][2] = button_02
-
-    boardFrameRow2 = Frame(width=200, height=100, background=BACKGROUND_COLOR)
-    boardFrameRow2.pack(side='top')
-    button_10 = Cell(boardFrameRow2, cross_cell, zero_cell, empty_cell, 1, 0)
-    button_10.pack(side='left')
-    button_11 = Cell(boardFrameRow2, cross_cell, zero_cell, empty_cell, 1, 1)
-    button_11.pack(side='left')
-    button_12 = Cell(boardFrameRow2, cross_cell, zero_cell, empty_cell, 1, 2)
-    button_12.pack(side='left')
-
-    boardFrameRow3 = Frame(width=200, height=100, background=BACKGROUND_COLOR)
-    boardFrameRow3.pack(side='top')
-    button_20 = Cell(boardFrameRow3, cross_cell, zero_cell, empty_cell, 2, 0)
-    button_20.pack(side='left')
-    button_21 = Cell(boardFrameRow3, cross_cell, zero_cell, empty_cell, 2, 1)
-    button_21.pack(side='left')
-    button_22 = Cell(boardFrameRow3, cross_cell, zero_cell, empty_cell, 2, 2)
-    button_22.pack(side='left')
+    for row in range(0, 3):
+        row_frame = Frame(width=200, height=100, background=BACKGROUND_COLOR)
+        for column in range(0, 3):
+            button = Cell(row_frame, cross_cell, zero_cell, empty_cell, name=f'{row}_{column}')
+            button['command'] = partial(board_clicked, button)
+            button.pack(side='left')
+            board[row][column] = button
+        row_frame.pack(side='top')
 
     reset_game_button = Button(text='New game', font=font.Font(family="Bradley Hand", size=40), padx=0, pady=0,
                                highlightthickness=0, command=drop_board)
