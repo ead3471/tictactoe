@@ -36,6 +36,10 @@ def center_window(window: Tk, width=300, height=450):
 
 
 def drop_board():
+    global winner
+    winner = CellState.NOT_SET
+    highlight_winner()
+
     for row in board:
         for cell in row:
             cell.drop_state()
@@ -84,6 +88,7 @@ def highlight_win(win_status: WinStatus):
     if not win_status.is_win:
         return
 
+    highlight_winner()
 
     if win_status.win_row > 0:
         for column in range(0, FIELD_SIZE):
@@ -101,16 +106,27 @@ def highlight_win(win_status: WinStatus):
                 board[cell][cell].highlight_as_win()
         else:
             for cell in range(0, FIELD_SIZE):
-                board[FIELD_SIZE - cell][cell].highlight_as_win()
+                board[FIELD_SIZE - cell - 1][cell].highlight_as_win()
+
+
+def highlight_winner():
+    if winner is CellState.CROSS:
+        crossPlayerTurn.config(bg='green')
+        return
+    if winner is CellState.ZERO:
+        zeroPlayerTurn.config(bg='green')
+        return
+
+    crossPlayerTurn.config(bg=BACKGROUND_COLOR)
+    zeroPlayerTurn.config(bg=BACKGROUND_COLOR)
 
 
 def get_player_win_status(player: CellState) -> WinStatus:
+    setted_cells_count = 0
     for row in range(0, FIELD_SIZE):
         row_is_win = True
         for column in range(0, FIELD_SIZE):
             row_is_win = row_is_win and (board[row][column].state == player)
-            if not row_is_win:
-                break
         if row_is_win:
             return WinStatus(True, win_row=row + 1)
 
@@ -118,8 +134,6 @@ def get_player_win_status(player: CellState) -> WinStatus:
         column_is_win = True
         for row in range(0, FIELD_SIZE):
             column_is_win = column_is_win and (board[row][column].state is player)
-            if not column_is_win:
-                break
         if column_is_win:
             return WinStatus(True, win_column=column + 1)
 
@@ -162,12 +176,12 @@ if __name__ == '__main__':
     crossPhotoImageTurnOn = PhotoImage(file=r"images/cross_turn_on_50_50.png")
     crossPhotoImageTurnOff = PhotoImage(file=r"images/cross_turn_off_50_50.png")
 
-    crossPlayerTurn = Canvas(headerFrame, width=100, height=50, bg=BACKGROUND_COLOR, highlightthickness=0)
-    crossPlayerImage = crossPlayerTurn.create_image(50, 25, image=crossPhotoImageTurnOn, anchor="center")
+    crossPlayerTurn = Canvas(headerFrame, width=50, height=50, bg=BACKGROUND_COLOR, highlightthickness=0)
+    crossPlayerImage = crossPlayerTurn.create_image(25, 25, image=crossPhotoImageTurnOn, anchor="center")
     crossPlayerTurn.pack(side='left')
 
-    zeroPlayerTurn = Canvas(headerFrame, width=100, height=50, bg=BACKGROUND_COLOR, highlightthickness=0)
-    zeroPlayerImage = zeroPlayerTurn.create_image(50, 25, image=zeroPhotoImageTurnOn, anchor="center")
+    zeroPlayerTurn = Canvas(headerFrame, width=50, height=50, bg=BACKGROUND_COLOR, highlightthickness=0)
+    zeroPlayerImage = zeroPlayerTurn.create_image(25, 25, image=zeroPhotoImageTurnOn, anchor="center")
     zeroPlayerTurn.pack(side='right')
 
     headerFrame.pack(side='top')
@@ -177,7 +191,7 @@ if __name__ == '__main__':
     create_board()
 
     reset_game_button = Button(text='New game', font=font.Font(family="Bradley Hand", size=40), padx=0, pady=0,
-                               highlightthickness=0, command=drop_board)
+                               highlightthickness=0, highlightbackground=BACKGROUND_COLOR, command=drop_board)
     reset_game_button.pack(side='top', padx=0, pady=5)
 
     window.mainloop()

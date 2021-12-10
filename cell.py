@@ -44,6 +44,7 @@ class CellState(Enum):
     NOT_SET = 1
     ZERO = 2
     CROSS = 3
+    NOBODY = 4
 
     def next_turn(self):
         if self is CellState.ZERO:
