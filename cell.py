@@ -11,8 +11,11 @@ class Cell(Button):
         self.name = name
         super().__init__(parent, padx=0, pady=0, image=empty_img, highlightthickness=0)
 
-    def click(self, is_cross_turn):
-        if is_cross_turn:
+    def highlight_as_win(self):
+        self.config(highlightbackground="red")
+
+    def click(self, player_turn):
+        if player_turn is CellState.CROSS:
             self.set_cross()
         else:
             self.set_zero()
@@ -28,7 +31,7 @@ class Cell(Button):
             self.state = CellState.ZERO
 
     def drop_state(self):
-        self.config(image=self.empty_img)
+        self.config(image=self.empty_img, highlightbackground="white")
         self.state = CellState.NOT_SET
 
     @classmethod
@@ -41,3 +44,9 @@ class CellState(Enum):
     NOT_SET = 1
     ZERO = 2
     CROSS = 3
+
+    def next_turn(self):
+        if self is CellState.ZERO:
+            return CellState.CROSS
+        else:
+            return CellState.ZERO
