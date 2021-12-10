@@ -14,11 +14,14 @@ class Cell(Button):
     def highlight_as_win(self):
         self.config(highlightbackground="red")
 
-    def click(self, player_turn):
-        if player_turn is CellState.CROSS:
-            self.set_cross()
-        else:
-            self.set_zero()
+    def click(self, player_turn) -> bool:
+        if self.state is CellState.NOT_SET:
+            if player_turn is CellState.CROSS:
+                self.set_cross()
+            else:
+                self.set_zero()
+            return True
+        return False
 
     def set_cross(self):
         if self.state is CellState.NOT_SET:
