@@ -33,11 +33,19 @@ def drop_board():
             cell.drop_state()
 
 
+def highlight_turn():
+    if is_cross_turn:
+        crossPlayerTurn.config(highlightthickness=1)
+        zeroPlayerTurn.config(highlightthickness=0)
+    else:
+        zeroPlayerTurn.config(highlightthickness=1)
+        crossPlayerTurn.config(highlightthickness=0)
+
 def board_clicked(button: Cell):
     global is_cross_turn
-    print(button.name)
     button.click(is_cross_turn)
     is_cross_turn = not is_cross_turn
+    highlight_turn()
 
 
 if __name__ == '__main__':
@@ -73,6 +81,7 @@ if __name__ == '__main__':
 
     headerFrame.pack(side='top')
 
+    highlight_turn()
     for row in range(0, 3):
         row_frame = Frame(width=200, height=100, background=BACKGROUND_COLOR)
         for column in range(0, 3):
