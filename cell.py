@@ -4,7 +4,7 @@ from enum import Enum
 
 class Cell(Button):
     def __init__(self, parent, cross_img, zero_img, empty_img, name=''):
-        self.state = CellState.NOT_SET
+        self.state = Player.NOT_SET
         self.empty_img = empty_img
         self.cross_img = cross_img
         self.zero_img = zero_img
@@ -15,8 +15,8 @@ class Cell(Button):
         self.config(highlightbackground="red")
 
     def click(self, player_turn) -> bool:
-        if self.state is CellState.NOT_SET:
-            if player_turn is CellState.CROSS:
+        if self.state is Player.NOT_SET:
+            if player_turn is Player.CROSS:
                 self.set_cross()
             else:
                 self.set_zero()
@@ -24,18 +24,18 @@ class Cell(Button):
         return False
 
     def set_cross(self):
-        if self.state is CellState.NOT_SET:
+        if self.state is Player.NOT_SET:
             self.config(image=self.cross_img)
-            self.state = CellState.CROSS
+            self.state = Player.CROSS
 
     def set_zero(self):
-        if self.state is CellState.NOT_SET:
+        if self.state is Player.NOT_SET:
             self.config(image=self.zero_img)
-            self.state = CellState.ZERO
+            self.state = Player.ZERO
 
     def drop_state(self):
         self.config(image=self.empty_img, highlightbackground="white")
-        self.state = CellState.NOT_SET
+        self.state = Player.NOT_SET
 
     @classmethod
     def drop_all_cells(cls):
@@ -43,14 +43,8 @@ class Cell(Button):
             cell.drop_state()
 
 
-class CellState(Enum):
+class Player(Enum):
     NOT_SET = 1
     ZERO = 2
     CROSS = 3
     NOBODY = 4
-
-    def next_turn(self):
-        if self is CellState.ZERO:
-            return CellState.CROSS
-        else:
-            return CellState.ZERO
