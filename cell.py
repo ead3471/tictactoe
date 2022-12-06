@@ -12,7 +12,7 @@ class Cell(Button):
         super().__init__(parent, padx=0, pady=0, image=empty_img, highlightthickness=0)
 
     def highlight_as_win(self):
-        self.config(highlightbackground="red")
+        self.config(highlightbackground="red", background="red")
 
     def click(self, player_turn) -> bool:
         if self.state is Player.NOT_SET:

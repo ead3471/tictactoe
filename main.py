@@ -7,6 +7,10 @@ from tkinter import font
 from cell import Cell, Player
 from functools import partial
 from players import RandomPlayer, HumanPlayer, TicTacToePlayer, create_from_string
+import os
+import sys
+import pathlib
+
 
 BACKGROUND_COLOR = "#B1DDC6"
 FIELD_SIZE = 3
@@ -68,13 +72,16 @@ def drop_board():
 def highlight_next_turn_player():
     if winner is Player.NOT_SET:
         if player_turn.player is Player.CROSS:
-            crossPlayer.itemconfig(crossPlayerImage, image=crossPhotoImageTurnOn)
+            crossPlayer.itemconfig(
+                crossPlayerImage, image=crossPhotoImageTurnOn)
             zeroPlayer.itemconfig(zeroPlayerImage, image=zeroPhotoImageTurnOff)
         elif player_turn.player is Player.ZERO:
-            crossPlayer.itemconfig(crossPlayerImage, image=crossPhotoImageTurnOff)
+            crossPlayer.itemconfig(
+                crossPlayerImage, image=crossPhotoImageTurnOff)
             zeroPlayer.itemconfig(zeroPlayerImage, image=zeroPhotoImageTurnOn)
         else:
-            crossPlayer.itemconfig(crossPlayerImage, image=crossPhotoImageTurnOff)
+            crossPlayer.itemconfig(
+                crossPlayerImage, image=crossPhotoImageTurnOff)
             zeroPlayer.itemconfig(zeroPlayerImage, image=zeroPhotoImageTurnOff)
     else:
         crossPlayer.itemconfig(crossPlayerImage, image=crossPhotoImageTurnOff)
@@ -86,7 +93,8 @@ def create_board():
         row_frame = Frame(width=200, height=100, background=BACKGROUND_COLOR)
         board.append([])
         for column in range(0, FIELD_SIZE):
-            button = Cell(row_frame, cross_cell, zero_cell, empty_cell, name=f'{row}_{column}')
+            button = Cell(row_frame, cross_cell, zero_cell,
+                          empty_cell, name=f'{row}_{column}')
             button['command'] = partial(board_clicked, button)
             button.pack(side='left')
             board[row].append(button)
@@ -100,7 +108,8 @@ def ai_player_turn():
     if winner is Player.NOT_SET:
         if player_turn.turn(cells_board=board, player_turn=player_turn.player):
             turn_count += 1
-            ai_player_win_status = get_game_state_after_player_turn(player_turn)
+            ai_player_win_status = get_game_state_after_player_turn(
+                player_turn)
             player_turn = next_player_turn()
             highlight_game_state(ai_player_win_status)
             highlight_next_turn_player()
@@ -130,7 +139,8 @@ def board_clicked(button: Cell):
     if not (winner is Player.NOT_SET):
         return
 
-    cell_is_clicked = player_turn.turn(button=button, player_turn=player_turn.player)
+    cell_is_clicked = player_turn.turn(
+        button=button, player_turn=player_turn.player)
     if cell_is_clicked:
         turn_count += 1
         player_winn_status = get_game_state_after_player_turn(player_turn)
@@ -193,16 +203,18 @@ def get_player_win_status(player: Player) -> WinStatus:
     for column in range(0, FIELD_SIZE):
         column_is_win = True
         for row in range(0, FIELD_SIZE):
-            column_is_win = column_is_win and (board[row][column].state is player)
+            column_is_win = column_is_win and (
+                board[row][column].state is player)
         if column_is_win:
             return WinStatus(True, win_column=column + 1)
 
     left_diag_is_win = True
     right_diag_is_win = True
     for column in range(0, FIELD_SIZE):
-        left_diag_is_win = left_diag_is_win and (board[column][column].state is player)
+        left_diag_is_win = left_diag_is_win and (
+            board[column][column].state is player)
         right_diag_is_win = right_diag_is_win and (
-                board[FIELD_SIZE - column - 1][column].state is player)
+            board[FIELD_SIZE - column - 1][column].state is player)
     if left_diag_is_win:
         return WinStatus(True, win_diag=1)
     if right_diag_is_win:
@@ -232,12 +244,16 @@ if __name__ == '__main__':
 
     center_window(window)
 
-    empty_cell = ImageTk.PhotoImage(Image.open('images/cell_50_50.png').resize((50, 50), Image.ANTIALIAS))
-    cross_cell = ImageTk.PhotoImage(Image.open('images/cell_cross_50_50.png').resize((50, 50), Image.ADAPTIVE))
-    zero_cell = ImageTk.PhotoImage(Image.open('images/cell_zero_50_50.png').resize((50, 50), Image.ADAPTIVE))
+    empty_cell = ImageTk.PhotoImage(Image.open(
+        'images/cell_50_50.png').resize((50, 50), Image.Resampling.LANCZOS))
+    cross_cell = ImageTk.PhotoImage(Image.open(
+        'images/cell_cross_50_50.png').resize((50, 50), Image.Palette.ADAPTIVE))
+    zero_cell = ImageTk.PhotoImage(Image.open(
+        'images/cell_zero_50_50.png').resize((50, 50), Image.Palette.ADAPTIVE))
 
     # Header
-    headerFrame = Frame(width=40, height=50, background=BACKGROUND_COLOR, padx=0, pady=0)
+    headerFrame = Frame(width=40, height=50,
+                        background=BACKGROUND_COLOR, padx=0, pady=0)
     headLabel = Label(headerFrame, width=200, text='Lets Play!', padx=0,
                       pady=10,
                       bg=BACKGROUND_COLOR, bd=0)
@@ -247,55 +263,67 @@ if __name__ == '__main__':
     headerFrame.pack(side='top')
 
     # Winners
-    winnersFrame = Frame(width=230, height=25, padx=0, pady=0, background=BACKGROUND_COLOR, )
+    winnersFrame = Frame(width=230, height=25, padx=0,
+                         pady=0, background=BACKGROUND_COLOR, )
     winnerLabelCross = Label(winnersFrame, height=25, text='Winner!', padx=0,
                              pady=20,
                              bg=BACKGROUND_COLOR, fg=BACKGROUND_COLOR, bd=0)
-    winnerLabelCross.config(font=font.Font(family="Bradley Hand", size=25, weight='bold'))
+    winnerLabelCross.config(font=font.Font(
+        family="Bradley Hand", size=25, weight='bold'))
     winnerLabelCross.pack(side='left')
 
     winnersFrame.pack(side='top')
     winnersFrame.pack_propagate(0)
     # Players
-    playersTurnFrame = Frame(width=200, height=70, background=BACKGROUND_COLOR, padx=0, pady=0)
+    playersTurnFrame = Frame(width=200, height=70,
+                             background=BACKGROUND_COLOR, padx=0, pady=0)
 
     zeroPhotoImageTurnOn = PhotoImage(file=r"images/zero_turn_on_50_50.png")
     zeroPhotoImageTurnOff = PhotoImage(file=r"images/zero_turn_off_50_50.png")
 
     crossPhotoImageTurnOn = PhotoImage(file=r"images/cross_turn_on_50_50.png")
-    crossPhotoImageTurnOff = PhotoImage(file=r"images/cross_turn_off_50_50.png")
+    crossPhotoImageTurnOff = PhotoImage(
+        file=r"images/cross_turn_off_50_50.png")
 
-    crossPlayer = Canvas(playersTurnFrame, width=50, height=50, bg=BACKGROUND_COLOR, highlightthickness=0)
-    crossPlayerImage = crossPlayer.create_image(25, 25, image=crossPhotoImageTurnOn, anchor="center")
+    crossPlayer = Canvas(playersTurnFrame, width=50, height=50,
+                         bg=BACKGROUND_COLOR, highlightthickness=0)
+    crossPlayerImage = crossPlayer.create_image(
+        25, 25, image=crossPhotoImageTurnOn, anchor="center")
     crossPlayer.pack(side='left')
 
-    zeroPlayer = Canvas(playersTurnFrame, width=50, height=50, bg=BACKGROUND_COLOR, highlightthickness=0)
-    zeroPlayerImage = zeroPlayer.create_image(25, 25, image=zeroPhotoImageTurnOn, anchor="center")
+    zeroPlayer = Canvas(playersTurnFrame, width=50, height=50,
+                        bg=BACKGROUND_COLOR, highlightthickness=0)
+    zeroPlayerImage = zeroPlayer.create_image(
+        25, 25, image=zeroPhotoImageTurnOn, anchor="center")
     zeroPlayer.pack(side='right')
 
     playersTurnFrame.pack(side='top')
     playersTurnFrame.pack_propagate(0)
 
     # choose players type
-    choosePlayersFrame = Frame(width=200, height=40, background=BACKGROUND_COLOR, padx=0, pady=0)
+    choosePlayersFrame = Frame(
+        width=200, height=40, background=BACKGROUND_COLOR, padx=0, pady=0)
     options_player_1 = ['Human', 'Random']
     selected_cross = StringVar(window, options_player_1[0])
     selected_cross.trace('w', set_players)
     choose_players_font = font.Font(family="Bradley Hand", size=20)
 
-    crossPlayerMenu = OptionMenu(choosePlayersFrame, selected_cross, *options_player_1)
+    crossPlayerMenu = OptionMenu(
+        choosePlayersFrame, selected_cross, *options_player_1)
     crossPlayerMenu.config(font=choose_players_font, bg=BACKGROUND_COLOR, padx=0,
-                           highlightthickness=0)
+                           highlightthickness=0, width=6)
     menu_1 = window.nametowidget(crossPlayerMenu.menuname)
     menu_1.config(font=choose_players_font)
+
     crossPlayerMenu.pack(side='left')
 
     options_player_2 = ['Human', 'Random']
     selected_zero = StringVar(window, options_player_2[0])
     selected_zero.trace('w', set_players)
-    zeroPlayerMenu = OptionMenu(choosePlayersFrame, selected_zero, *options_player_2)
+    zeroPlayerMenu = OptionMenu(
+        choosePlayersFrame, selected_zero, *options_player_2)
     zeroPlayerMenu.config(font=choose_players_font, bg=BACKGROUND_COLOR, padx=0,
-                          highlightthickness=0)
+                          highlightthickness=0, width=6)
     menu_2 = window.nametowidget(zeroPlayerMenu.menuname)
     menu_2.config(font=choose_players_font)
     zeroPlayerMenu.pack(side='right')

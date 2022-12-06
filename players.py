@@ -3,7 +3,7 @@ from cell import Player, Cell
 import random
 
 
-def prepare_board_from_cells(cells_board: []) -> list:
+def prepare_board_from_cells(cells_board: list) -> list:
     result_list = [cell.state for row in cells_board for cell in row]
     return result_list
 
@@ -53,7 +53,8 @@ class RandomPlayer(TicTacToePlayer):
         if self.player is not player_turn:
             return False
 
-        not_set_cells = [cell for row in cells_board for cell in row if cell.state is Player.NOT_SET]
+        not_set_cells = [
+            cell for row in cells_board for cell in row if cell.state is Player.NOT_SET]
         if len(not_set_cells) > 0:
             select_cell = random.choice(not_set_cells)  # type:Cell
             return select_cell.click(player_turn=self.player)

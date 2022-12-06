@@ -1,2 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 /venv/
+.vscode
+/images/*.psd
+__pycache__
+.DS_Store
+
